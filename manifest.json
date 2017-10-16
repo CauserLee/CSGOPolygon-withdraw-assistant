@@ -23,9 +23,9 @@
   ],
   "background": {
     "scripts": [
-      "assets/imports/jQuery-3.2.1.min.js",
-      "background.js"
-    ]
+      "eventPage.js"
+    ],
+    "persistent": false
   },
   "content_scripts": [
     {
@@ -41,5 +41,5 @@
       ]
     }
   ],
-  "update_url": "https://www.protogalaxy.me/github/updateInfo/csgopolygon_withdraw_assistant/updates.xml"
+  "update_url": "https://www.protogalaxy.me/github/updateInfo/chromeExtensionsUpdates.xml"
 }
