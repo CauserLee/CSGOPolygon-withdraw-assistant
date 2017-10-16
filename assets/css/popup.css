@@ -1,15 +1,33 @@
-.popup-main {
-
+body{
+	background-color : #C6C8CC;
 }
 
-.popup-title {
-
+.popup-main{
+	width      : 280px;
+	text-align : center;
 }
 
-.popup-content {
-
+.popup-title{
+	font-size   : 15px;
+	font-weight : 700;
 }
 
-.popup-content-version {
+.popup-content{
+	font-weight   : 700;
+	margin-top    : 10px;
+	margin-bottom : 10px;
+}
 
+.popup-content img{
+	width  : 100px;
+	height : 100px;
+}
+
+.popup-content-version{
+	margin-top    : 2px;
+	margin-bottom : 2px;
+}
+
+.popup-content-details{
+	font-size : 10px;
 }
