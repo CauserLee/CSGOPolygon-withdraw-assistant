@@ -2,7 +2,7 @@ let previous      = new Map();
 let next          = new Map();
 let alertBar      = document.querySelector("#inlineAlert");
 let realsLeft     = document.querySelector("#left .reals");
-let realsRightExt = document.querySelector(".fw-4");
+let realsRightExt = document.getElementsByClassName(".fw-4");
 let target        = document.querySelector("#left");
 let config        = {attributes: false, childList: true, characterData: true, subtree: true};
 let observer      = new MutationObserver(function () {
@@ -29,6 +29,7 @@ let observer      = new MutationObserver(function () {
 realsRightExt.append("<div class='panel-body'>" +
     "<div id='right-ext' class='slot-group noselect'></div>" +
     "</div>");
+
 observer.observe(target, config);
 
 function setTimestamp(map) {
