@@ -1,52 +1,71 @@
-let previous      = new Map();
-let next          = new Map();
-let alertBar      = document.querySelector("#inlineAlert");
-let realsLeft     = document.querySelector("#left .reals");
-let realsRightExt = document.getElementsByClassName(".fw-4");
-let target        = document.querySelector("#left");
-let config        = {attributes: false, childList: true, characterData: true, subtree: true};
-let observer      = new MutationObserver(function () {
-    if (alertBar.hasClass("alert-success")) {
-        if (previous.has("timestamp")) {
-            if (next.has("timestamp")) {
-                previous = next;
-                next.clear();
-                setTimestamp(next);
-                fillMap(next);
-                compareMap(previous, next);
-            } else {
-                setTimestamp(next);
-                fillMap(next);
-                compareMap(previous, next);
-            }
+let next     = new Map();
+let target   = document.querySelector("#left .reals");
+let config   = {attributes: false, childList: true, characterData: true, subtree: true};
+let observer = new MutationObserver(function () {
+    if ($("#inlineAlert").hasClass("alert-success")) {
+        if (sessionStorage.getItem("previous")) {
+            let previous = new Map(JSON.parse(sessionStorage.getItem("previous")));//Convert the ES6 Map from an Array of pairs
+            next.clear();
+            fillMap(next);
+            compareMap(previous, next);
+            sessionStorage.setItem("previous", JSON.stringify([...next]));
+            addListener();
+            observer.disconnect();
         } else {
-            setTimestamp(previous);
+            let previous = new Map();
             fillMap(previous);
+            sessionStorage.setItem("previous", JSON.stringify([...previous])); //[...previous]: Convert the ES6 Map to an Array of pairs
+            observer.disconnect();
         }
     }
 });
 
-realsRightExt.append("<div class='panel-body'>" +
-    "<div id='right-ext' class='slot-group noselect'></div>" +
-    "</div>");
-
-observer.observe(target, config);
-
-function setTimestamp(map) {
-    map.set("timestamp", new Date().getTime());
-}
+$(document).ready(function () {
+    $(".fw-4").append("<div class='panel-body'>\n" +
+        "<button class=\"btn btn-success btn-lg\" style=\"width:100%\">New Items<div style=\"font-size:12px\">Product By Arthur.Lee</div></button>\n" +
+        "<div id='right-ext' class='slot-group noselect'>\n" +
+        "<span id='right-ext-reals' class=\"reals\"></span>\n" +
+        "<span class=\"bricks\">\n" +
+        "<div class=\"placeholder\"></div>\n" +
+        "<div class=\"placeholder\"></div>\n" +
+        "<div class=\"placeholder\"></div>\n" +
+        "<div class=\"placeholder\"></div>\n" +
+        "<div class=\"placeholder\"></div>\n" +
+        "<div class=\"placeholder\"></div>\n" +
+        "<div class=\"placeholder\"></div>\n" +
+        "<div class=\"placeholder\"></div>\n" +
+        "</span>\n" +
+        "</div>\n" +
+        "</div>\n");
+    observer.observe(target, config);
+});
 
 function fillMap(map) {
-    for (let i = 0; i < realsLeft.length; i++) {
-        map.set(realsLeft.childNodes[i].childNodes[0].getAttribute("data-view"), realsLeft.childNodes[i].childNodes[0].getAttribute("data-pos"));
+    for (let i = 0; i < target.childNodes.length; i++) {
+        map.set(String(target.childNodes[i].childNodes[0].getAttribute("data-view")), String(target.childNodes[i].childNodes[0].getAttribute("data-pos")));
     }
 }
 
 function compareMap(previous, next) {
-    for (let [key, value] of next.entries()) {
-        if (!previous.has(key)) {
-            let node = document.importNode(document.querySelector(''), true);
-            document.getElementById("#right-ext").appendChild(node);
+    for (let key of previous.keys()) {
+        if (!next.has(key)) {
+            $("#right-ext-reals").append();
+            //TODO:复制节点
         }
     }
+}
+
+function addListener() {
+    $(document).on("click", "#right-ext .slot:not(.reject)", function () {
+        var b = $(this).data("bot") || null;
+        if (b != null) {
+            $("#botFilter .btn").removeClass("active").addClass("disabled");
+            $("#botFilter .btn[data-bot='" + b + "']").addClass("active").removeClass("disabled");
+            doFilter();
+        }
+        $("#right .reals").append("<div class='placeholder'></div>");
+        $(this).appendTo($("#right .reals .placeholder:empty").first());
+        addPadding("#right", 4);
+        addUp();
+    });
 }
