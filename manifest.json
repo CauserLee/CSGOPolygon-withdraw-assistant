@@ -41,6 +41,5 @@
         "assets/js/withdraw.js"
       ]
     }
-  ],
-  "update_url": "https://www.protogalaxy.me/github/updateInfo/chromeExtensionsUpdates.xml"
+  ]
 }
