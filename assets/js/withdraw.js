@@ -20,12 +20,16 @@ let observer = new MutationObserver(function () {
 		}
 	}
 });
-let observerRight = new MutationObserver(function () {
-	$(document).on("click", ".slot-right-ext", function () {
-		//$(this).parent().remove();
-		$(this).appendTo(".placeholder-right-ext[data-pos='" + $(this).data("pos") + "']");
-		addPadding("#right", 4);
-	});
+let observerRight = new MutationObserver(function (mutationRecord) {
+	let addedNode = mutationRecord[1].addedNodes[0];
+	if ($(addedNode).hasClass("slot-right-ext")) {
+		$(addedNode).on("click", function () {
+			let parent = $(this).parent();
+			$(this).appendTo(".placeholder-right-ext[data-pos='" + $(this).data("pos") + "']");
+			parent.remove();
+			addPadding("#right", 4);
+		});
+	}
 });
 
 $(document).ready(function () {
