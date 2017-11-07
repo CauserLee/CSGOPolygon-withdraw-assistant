@@ -1,7 +1,7 @@
 let next             = new Map();
 let target           = document.querySelector("#left .reals");
 let targetRight      = document.querySelector("#right .reals");
-let targetRightExt   = document.querySelector("#right-ext .reals");
+let targetRightExt   = $("#right-ext .reals").get(0);
 const config         = {attributes: false, childList: true, characterData: true, subtree: true};
 let observer         = new MutationObserver(function () {
     if ($("#inlineAlert").hasClass("alert-success")) {
