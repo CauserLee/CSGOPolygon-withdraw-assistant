@@ -1,8 +1,9 @@
-let next          = new Map();
-let target        = document.querySelector("#left .reals");
-let targetRight   = document.querySelector("#right .reals");
-const config      = {attributes: false, childList: true, characterData: true, subtree: true};
-let observer      = new MutationObserver(function () {
+let next             = new Map();
+let target           = document.querySelector("#left .reals");
+let targetRight      = document.querySelector("#right .reals");
+let targetRightExt   = document.querySelector("#right-ext .reals");
+const config         = {attributes: false, childList: true, characterData: true, subtree: true};
+let observer         = new MutationObserver(function () {
     if ($("#inlineAlert").hasClass("alert-success")) {
         if (sessionStorage.getItem("previous")) {
             let previous = new Map(JSON.parse(sessionStorage.getItem("previous")));//Convert the ES6 Map from an Array of pairs
@@ -20,18 +21,24 @@ let observer      = new MutationObserver(function () {
         }
     }
 });
-let observerRight = new MutationObserver(function (mutationRecord) {
+let observerRight    = new MutationObserver(function (mutationRecord) {
     let addedNode = mutationRecord[1].addedNodes[0];
     if ($(addedNode).hasClass("slot-right-ext")) {
         $(addedNode).on("click", function () {
             let parent  = $(this).parent();
             let pointer = $("#right-ext-reals").children("[data-pos='" + $(this).attr("data-pos") + "']");
-            console.log(pointer);
-            console.log($(this));
-            pointer.append(this);
+            pointer.prepend(this);
             parent.remove();
             addPadding("#right", 4);
-            console.log(mutationRecord);
+        });
+    }
+});
+let observerRightExt = new MutationObserver(function (mutationRecord) {
+    let addedNode = mutationRecord[1].addedNodes[0];
+    if ($(addedNode).hasClass("slot-right-ext")) {
+        $(addedNode).on("click", function () {
+            $("#right .reals").append("<div class='placeholder placeholder-right-ext'></div>");
+            $(this).appendTo($("#right .reals .placeholder-right-ext:empty").first());
         });
     }
 });
@@ -55,6 +62,7 @@ $(document).ready(function () {
         "</div>\n");
     observer.observe(target, config);
     observerRight.observe(targetRight, config);
+    observerRightExt.observe(targetRightExt, config);
 });
 
 function fillMap(map) {
@@ -85,38 +93,13 @@ function addListener() {
         if (!$(this).hasClass("slot-right-ext")) {
             $(this).addClass("slot-right-ext");
         }
+        $(this).removeClass("slot");
         $(this).appendTo($("#right .reals .placeholder-right-ext:empty").first());
         addPadding("#right", 4);
     });
 }
 
 //imports
-function doFilter() {
-    let b     = $("#botFilter .btn.active").data("bot") || 0;
-    let t     = $("#filter").val().toLowerCase();
-    let total = $("#left .reals>.placeholder").length + $("#right-ext .reals>.placeholder").length;
-    let n     = $("#left .reals>.placeholder").addClass("hidden").filter(function (i, e) {
-        let bx = $(this).data("bot") || "";
-        let tx = $(this).data("name") || "";
-        let px = $(this).data("price") || 0;
-        if (b == 0 || b == bx) {
-            if (tx.toLowerCase().indexOf(t) >= 0) {
-                return true;
-            } else if (t.charAt(0) == ">") {
-                return px > parseInt(t.substr(1));
-            } else if (t.charAt(0) == ">") {
-                return px < parseInt(t.substr(1));
-            }
-        }
-    }).removeClass("hidden").length;
-    if (t === "" && b == 0) {
-        $("#left_number").html(total);
-    } else {
-        $("#left_number").html(n + "/" + total);
-    }
-    addPadding("#left", 6);
-}
-
 function addPadding(lr, across) {
     let MIN    = 2;
     let count  = $(lr + " .reals>.placeholder:not(.hidden)").length;
